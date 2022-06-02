@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Plan {
     public static final int NOT_STARTED = 0;
@@ -27,8 +26,24 @@ public class Plan {
         finishButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                planStatus = FINISHED;
-                planTable.updatePlanTable();
+                if (planStatus == Plan.NOT_STARTED) {
+                    JOptionPane.showMessageDialog(planTable.getFrame(), "计划还未开始~");
+                } else if (planStatus == Plan.UNFINISHED) {
+                    int ret = JOptionPane.showConfirmDialog(planTable.getFrame(),
+                            "错过了计划截止时间，您是否真的完成了计划？",
+                            "未完成计划",
+                            JOptionPane.YES_NO_OPTION);
+                    if (ret == JOptionPane.YES_OPTION) {
+                        planStatus = FINISHED;
+                        planTable.updatePlanTable();
+                    }
+                } else if (planStatus == Plan.FINISHED) {
+                    JOptionPane.showMessageDialog(planTable.getFrame(), "计划已经完成过了");
+                } else if (planStatus == Plan.RUNNING) {
+                    planStatus = FINISHED;
+                    planTable.updatePlanTable();
+                    JOptionPane.showMessageDialog(planTable.getFrame(), "完成了该计划，向下一个目标加油！");
+                }
             }
         });
         this.planTitle = planTitle;
@@ -81,6 +96,10 @@ public class Plan {
         return planStatus;
     }
 
+    public void setPlanStatus(int planStatus) {
+        this.planStatus = planStatus;
+    }
+
     public JButton getFinishButton() {
         return finishButton;
     }
@@ -100,8 +119,10 @@ public class Plan {
             return "未开始";
         } else if (planStatus == Plan.UNFINISHED) {
             return "未完成";
-        } else {
+        } else if (planStatus == Plan.FINISHED) {
             return "已完成";
+        } else {
+            return "进行中";
         }
     }
 

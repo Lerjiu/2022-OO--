@@ -160,6 +160,10 @@ public class PlanTable {
         return planTable;
     }
 
+    public JFrame getFrame() {
+        return jFrame;
+    }
+
     public Box getPlanTableBox() {
         return planTableBox;
     }
@@ -168,13 +172,6 @@ public class PlanTable {
         for (int i = 0; i < model.getRowCount(); i++) {
             Plan plan = (Plan) model.getValueAt(i,0);
             if ((start.compareTo(plan.getEnd()) < 0) && (end.compareTo(plan.getStart()) > 0)) {
-                System.out.println("start" + plan.getStart().getTimeInMillis());
-                System.out.println("end" + plan.getEnd().getTimeInMillis());
-                System.out.println("this start" + start.getTimeInMillis());
-                System.out.println("this end" + end.getTimeInMillis());
-                System.out.println("start" + start.compareTo(plan.getEnd()));
-                System.out.println("end" + end.compareTo(plan.getStart()));
-                System.out.println(i);
                 return true;
             }
         }
@@ -201,5 +198,25 @@ public class PlanTable {
             }
         }
         return false;
+    }
+
+    public void checkPlanStatus(Calendar now) {
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Plan plan = (Plan) model.getValueAt(i, 0);
+            if (plan.getPlanStatus() == Plan.NOT_STARTED) {
+                if (plan.getStart().before(now) && plan.getEnd().after(now)) {
+                    plan.setPlanStatus(Plan.RUNNING);
+                    updatePlanTable();
+                } else if (plan.getEnd().before(now)) {
+                    plan.setPlanStatus(Plan.UNFINISHED);
+                    updatePlanTable();
+                }
+            } else if (plan.getPlanStatus() == Plan.RUNNING) {
+                if (plan.getEnd().before(now)) {
+                    plan.setPlanStatus(Plan.UNFINISHED);
+                    updatePlanTable();
+                }
+            }
+        }
     }
 }

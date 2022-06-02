@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 public class Test {
@@ -95,6 +98,16 @@ public class Test {
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setBounds(200,200,1200,600);
         jFrame.setVisible(true);
+
+        TimerTask checkPlanStatus = new TimerTask() {
+            @Override
+            public void run() {
+                Calendar now = Calendar.getInstance();
+                plans.checkPlanStatus(now);
+            }
+        };
+
+        new Timer().schedule(checkPlanStatus, 0, 2000);
 
     }
 }
