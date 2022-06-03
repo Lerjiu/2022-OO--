@@ -104,6 +104,12 @@ public class PlanTable {
     }
 
     public int addPlan(Plan plan) {
+        System.out.println("plan num:" + model.getRowCount());
+        System.out.println("start:" + plan.getStart());
+        System.out.println("end:" + plan.getEnd());
+        //为finishButton恢复监听事件，并且防止重复添加
+        plan.removeListenerForButton();
+        plan.addListenerForButton(self);
         Object[] row = new Object[3];
         row[0] = plan;
         row[1] = plan;
@@ -125,6 +131,9 @@ public class PlanTable {
 
         for (int i = 0; i < model.getRowCount(); i++) {
             Plan planI = (Plan) model.getValueAt(i, 0);
+            System.out.println(planI.getStringPlanTime());
+            System.out.println("start:" + planI.getStart());
+            System.out.println("end:" + planI.getEnd());
             if (plan.getStart().compareTo(planI.getEnd()) >= 0) {
                 continue;
             } else {
@@ -172,6 +181,10 @@ public class PlanTable {
         for (int i = 0; i < model.getRowCount(); i++) {
             Plan plan = (Plan) model.getValueAt(i,0);
             if ((start.compareTo(plan.getEnd()) < 0) && (end.compareTo(plan.getStart()) > 0)) {
+                System.out.println("start:" + start);
+                System.out.println("end:" + end);
+                System.out.println("overlap: start:" + plan.getStart());
+                System.out.println("overlap: end:" + plan.getEnd());
                 return true;
             }
         }
@@ -217,6 +230,13 @@ public class PlanTable {
                     updatePlanTable();
                 }
             }
+        }
+    }
+
+    public void updatePlanToDayPlanList(DayPlanList dayPlanList) {
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Plan plan = (Plan) model.getValueAt(i, 0);
+            dayPlanList.addDayPlan(plan);
         }
     }
 }

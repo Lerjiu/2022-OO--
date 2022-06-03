@@ -98,6 +98,7 @@ public class PlanDetailDialog {
                         planTable.removeSelectedPlan();
                         int pos = planTable.addPlan(plan);
                         planTable.setSelectedPlan(pos);
+                        PlanManage.updateDayPlanList();
 
                         JOptionPane.showMessageDialog(planDetailDialog,"修改成功");
                     }

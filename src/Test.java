@@ -109,5 +109,6 @@ public class Test {
 
         new Timer().schedule(checkPlanStatus, 0, 2000);
 
+        PlanManage.getTodayPlan(plans);
     }
 }

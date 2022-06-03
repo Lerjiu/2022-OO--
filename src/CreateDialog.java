@@ -80,6 +80,7 @@ public class CreateDialog {
                                 (String) endHourComboBox.getSelectedItem(),
                                 (String) endMinuteComboBox.getSelectedItem());
                         planTable.addPlan(plan);
+                        PlanManage.updateDayPlanList();
 
                         JOptionPane.showMessageDialog(createJDialog,"添加成功");
                     }
@@ -158,8 +159,12 @@ public class CreateDialog {
         int endMinute = endMinuteComboBox.getSelectedIndex();
         startCalendar.set(Calendar.HOUR_OF_DAY, startHour);
         startCalendar.set(Calendar.MINUTE, startMinute);
+        startCalendar.set(Calendar.SECOND, 0);
+        startCalendar.set(Calendar.MILLISECOND, 0);
         endCalendar.set(Calendar.HOUR_OF_DAY, endHour);
         endCalendar.set(Calendar.MINUTE, endMinute);
+        endCalendar.set(Calendar.SECOND, 0);
+        endCalendar.set(Calendar.MILLISECOND, 0);
 
         Calendar now = Calendar.getInstance();
         if (endCalendar.before(now)) {
