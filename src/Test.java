@@ -1,10 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 
 public class Test {
     private static void init() {
@@ -85,15 +82,27 @@ public class Test {
         planBox.add(buttonBox.getButtonBox());
         JScrollPane planScrollPane = new JScrollPane(planBox);
 
-        FunctionBox functionBox = new FunctionBox();
-        CreateBox createBox = new CreateBox();
-        functionBox.addItem(createBox.getCreateBox());
+//        FunctionBox functionBox = new FunctionBox();
+//        CreateBox createBox = new CreateBox();
+//        functionBox.addItem(createBox.getCreateBox());
         FunctionBar functionBar = new FunctionBar(jFrame,plans);
+
+        Box topBox = Box.createHorizontalBox();
+        topBox.add(functionBar.getFunctionBar());
+
         Box box = Box.createVerticalBox();
 //        box.add(functionBox.getFunctionBox());
-        box.add(functionBar.getFunctionBar());
+        box.add(topBox);
         box.add(planScrollPane);
-        jFrame.add(box);
+
+        Box showRunningPlanBox = Box.createHorizontalBox();
+        RunningPlanBox runningPlanBox = new RunningPlanBox();
+        CurrentTimeBox currentTimeBox = new CurrentTimeBox();
+        showRunningPlanBox.add(runningPlanBox.getRunningPlanBox());
+        showRunningPlanBox.add(currentTimeBox.getShowTimeBox());
+
+        PageTabbedPane pageTabbedPane = new PageTabbedPane(box, Box.createHorizontalBox(), Box.createHorizontalBox(), showRunningPlanBox);
+        jFrame.add(pageTabbedPane.getPageTabbedPane());
 
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setBounds(200,200,1200,600);
@@ -102,12 +111,15 @@ public class Test {
         TimerTask checkPlanStatus = new TimerTask() {
             @Override
             public void run() {
-                Calendar now = Calendar.getInstance();
-                plans.checkPlanStatus(now);
+                boolean changed = false;
+                changed = plans.checkPlanStatus();
+                currentTimeBox.repaintClock();
+                if (changed)
+                    runningPlanBox.updateRunningPlanBox(plans.getRunningPlan());
             }
         };
 
-        new Timer().schedule(checkPlanStatus, 0, 2000);
+        new Timer().schedule(checkPlanStatus, 0, 1000);
 
         PlanManage.getTodayPlan(plans);
     }

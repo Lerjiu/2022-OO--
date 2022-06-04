@@ -213,24 +213,30 @@ public class PlanTable {
         return false;
     }
 
-    public void checkPlanStatus(Calendar now) {
+    public boolean checkPlanStatus() {
+        boolean changed = false;
+        Calendar now = Calendar.getInstance();
         for (int i = 0; i < model.getRowCount(); i++) {
             Plan plan = (Plan) model.getValueAt(i, 0);
             if (plan.getPlanStatus() == Plan.NOT_STARTED) {
                 if (plan.getStart().before(now) && plan.getEnd().after(now)) {
                     plan.setPlanStatus(Plan.RUNNING);
+                    changed = true;
                     updatePlanTable();
                 } else if (plan.getEnd().before(now)) {
                     plan.setPlanStatus(Plan.UNFINISHED);
+                    changed = true;
                     updatePlanTable();
                 }
             } else if (plan.getPlanStatus() == Plan.RUNNING) {
                 if (plan.getEnd().before(now)) {
                     plan.setPlanStatus(Plan.UNFINISHED);
+                    changed = true;
                     updatePlanTable();
                 }
             }
         }
+        return changed;
     }
 
     public void updatePlanToDayPlanList(DayPlanList dayPlanList) {
@@ -238,5 +244,15 @@ public class PlanTable {
             Plan plan = (Plan) model.getValueAt(i, 0);
             dayPlanList.addDayPlan(plan);
         }
+    }
+
+    public Plan getRunningPlan() {
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Plan plan = (Plan) model.getValueAt(i, 0);
+            if (plan.getPlanStatus() == Plan.RUNNING) {
+                return plan;
+            }
+        }
+        return null;
     }
 }
