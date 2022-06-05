@@ -5,6 +5,10 @@ import java.time.LocalTime;
 
 public class ImitateClock extends JComponent {
     public void paint(Graphics g){
+        Color darkBlue = new Color(0x00, 0x31, 0x5e);
+        Color lightBlue = new Color(0xa1,0xc4,0xfd);
+        Color darkGreen = new Color(0x00, 0x44, 0x40);
+        Color lightGreen = new Color(0x59, 0xba, 0x80);
         //获取当前宽度
         int width=getWidth();
         System.out.println("width:" + width);
@@ -25,6 +29,7 @@ public class ImitateClock extends JComponent {
         rh.put(RenderingHints.KEY_STROKE_CONTROL,RenderingHints.VALUE_STROKE_PURE);
         rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION,RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g2d.setRenderingHints(rh);
+        g2d.setColor(darkBlue);
         //钟表外圈
         g2d.drawOval(50,50,2*r,2*r);
         //钟表外圈
@@ -41,7 +46,7 @@ public class ImitateClock extends JComponent {
         double  r1=1.06*r-(50*(bi+0.03)),r2=1.02*r-(50*(bi+0.03));
         double cx=r+50,cy=r+50;
         //绘制小时刻度
-        g2d.setPaint(Color.red);
+        g2d.setPaint(Color.black);
         for(double i = 0;i<2.0*Math.PI;i+=(Math.PI/6.0)){
             double lx,ly,rx,ry;
             lx=1.05*r1*Math.sin(i);
@@ -61,24 +66,31 @@ public class ImitateClock extends JComponent {
             g2d.draw(new Line2D.Double(cx+lx,cy-ly,cx+rx,cy-ry));
         }
         //时针
-        g2d.setPaint(Color.black);
+        g2d.setPaint(darkGreen);
         g2d.setStroke(new BasicStroke(4.0f));
         g2d.draw(new Line2D.Double(cx,cy,cx+0.6*r*Math.sin(hour),cy-0.6*r*Math.cos(hour)));
         //分针
-        g2d.setPaint(Color.green);
+        g2d.setPaint(darkBlue);
         g2d.setStroke(new BasicStroke(2.0f));
         g2d.draw(new Line2D.Double(cx,cy,cx+0.7*r*Math.sin(minute),cy-0.7*r*Math.cos(minute)));
         //秒针
-        g2d.setPaint(Color.red);
+        g2d.setPaint(lightBlue);
         g2d.setStroke(new BasicStroke(1.0f));
         g2d.draw(new Line2D.Double(cx,cy,cx+0.8*r*Math.sin(second),cy-0.8*r*Math.cos(second)));
         Font  f=new Font("Serif",Font.PLAIN,(int)(50*(bi+0.03)));
         g2d.setFont(f);
-        g2d.setColor(Color.black);
+        g2d.setColor(lightGreen);
         int h = LocalTime.now().getHour();
         int m=LocalTime.now().getMinute();
         int s=LocalTime.now().getSecond();
-        g2d.drawString(""+h+":"+m+":"+s,10,50);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%02d", h));
+        sb.append(':');
+        sb.append(String.format("%02d", m));
+        sb.append(':');
+        sb.append(String.format("%02d", s));
+        g2d.drawString(sb.toString(), 10,50);
+        g2d.setColor(darkGreen);
         int count=0;
         for(double i=0;i<2.0*Math.PI;i+=(Math.PI/6.0)){
             double r1_2=1.06*r-(70*(bi+0.03));

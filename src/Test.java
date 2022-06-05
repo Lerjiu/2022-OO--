@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -95,13 +97,32 @@ public class Test {
         box.add(topBox);
         box.add(planScrollPane);
 
-        Box showRunningPlanBox = Box.createHorizontalBox();
         RunningPlanBox runningPlanBox = new RunningPlanBox();
         CurrentTimeBox currentTimeBox = new CurrentTimeBox();
-        showRunningPlanBox.add(runningPlanBox.getRunningPlanBox());
-        showRunningPlanBox.add(currentTimeBox.getShowTimeBox());
+        JSplitPane runningPlanSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, runningPlanBox.getRunningPlanBox(), currentTimeBox.getShowTimeBox());
+        runningPlanSplitPane.setResizeWeight(1);
+        runningPlanSplitPane.setContinuousLayout(true);
 
-        PageTabbedPane pageTabbedPane = new PageTabbedPane(box, Box.createHorizontalBox(), Box.createHorizontalBox(), showRunningPlanBox);
+        JTabbedPane historyPlanJTabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+        historyPlanJTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        historyPlanJTabbedPane.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                JTabbedPane pane = (JTabbedPane) e.getSource();
+                int units = e.getWheelRotation();
+                int oldIndex = pane.getSelectedIndex();
+                int newIndex = oldIndex + units;
+                if (newIndex < 0)
+                    pane.setSelectedIndex(0);
+                else if (newIndex >= pane.getTabCount())
+                    pane.setSelectedIndex(pane.getTabCount() - 1);
+                else
+                    pane.setSelectedIndex(newIndex);
+            }
+        });
+        JScrollPane historyPlanJScrollPane = new JScrollPane(historyPlanJTabbedPane);
+
+        PageTabbedPane pageTabbedPane = new PageTabbedPane(box, historyPlanJScrollPane, Box.createHorizontalBox(), runningPlanSplitPane);
         jFrame.add(pageTabbedPane.getPageTabbedPane());
 
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -109,18 +130,28 @@ public class Test {
         jFrame.setVisible(true);
 
         TimerTask checkPlanStatus = new TimerTask() {
+            Plan oldRunningPlan = null;
+            Plan newRunningPlan = null;
+
             @Override
             public void run() {
-                boolean changed = false;
-                changed = plans.checkPlanStatus();
+                plans.checkPlanStatus();
                 currentTimeBox.repaintClock();
-                if (changed)
+
+                newRunningPlan = plans.getRunningPlan();
+                if ((oldRunningPlan == null && newRunningPlan != null)
+                    || (oldRunningPlan != null && newRunningPlan == null)
+                    || (oldRunningPlan != null && newRunningPlan != null && (!oldRunningPlan.equals(newRunningPlan)))) {
                     runningPlanBox.updateRunningPlanBox(plans.getRunningPlan());
+                }
+                oldRunningPlan = newRunningPlan;
             }
         };
 
         new Timer().schedule(checkPlanStatus, 0, 1000);
 
         PlanManage.getTodayPlan(plans);
+
+        PlanManage.getHistoryPlan(historyPlanJTabbedPane);
     }
 }

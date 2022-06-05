@@ -9,12 +9,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Calendar;
 
-public class PlanTable {
+public class PlanTable implements PlanAddible {
     private static final Object[] columName = {"计划", "状态", "时间"};
     private boolean isModify;
     private PlanTable self;
     private JTable planTable;
     private DefaultTableModel model;
+    private PlanTableRenderer planTableRenderer;
     private ButtonBox buttonBox;
     private Box planTableBox;
     private JFrame jFrame;
@@ -32,7 +33,7 @@ public class PlanTable {
             }
         };
         planTable.setRowHeight(80);
-        PlanTableRenderer planTableRenderer = new PlanTableRenderer();
+        planTableRenderer = new PlanTableRenderer();
         planTable.setDefaultRenderer(Object.class, planTableRenderer);
         planTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -103,10 +104,11 @@ public class PlanTable {
         planTableBox.add(Box.createVerticalGlue());
     }
 
+    @Override
     public int addPlan(Plan plan) {
-        System.out.println("plan num:" + model.getRowCount());
-        System.out.println("start:" + plan.getStart());
-        System.out.println("end:" + plan.getEnd());
+//        System.out.println("plan num:" + model.getRowCount());
+//        System.out.println("start:" + plan.getStart());
+//        System.out.println("end:" + plan.getEnd());
         //为finishButton恢复监听事件，并且防止重复添加
         plan.removeListenerForButton();
         plan.addListenerForButton(self);

@@ -11,25 +11,49 @@ public class RunningPlanBox {
     private JLabel planTitleJLabel;
     private JLabel planTimeJLabel;
     private JLabel planDescribeJLabel;
+    private JTextArea planTitleJTA;
+    private JTextArea planTimeJTA;
+    private JTextArea planDescribeJTA;
 
     public RunningPlanBox() {
+        Color color = new Color(0xa1,0xc4,0xfd);
+
         showRunningPlanBox = Box.createVerticalBox();
         planTitle = new JPanel();
         planTime = new JPanel();
         planDescribe = new JPanel();
 
-        planTitleJLabel = new JLabel("暂无进行中的计划");
-        planTimeJLabel = new JLabel("00:00-00:00");
-        planDescribeJLabel = new JLabel("暂无进行中的计划");
-        planDescribeJLabel.setSize(new Dimension(500, 0));
+        planTitleJLabel = new JLabel("计划标题");
+        planTimeJLabel = new JLabel("计划时间");
+        planDescribeJLabel = new JLabel("详细信息");
+
+        planTitleJTA = new JTextArea(1, 40);
+        planTitleJTA.setEnabled(false);
+        planTitleJTA.setText("暂无进行中的计划");
+
+        planTimeJTA = new JTextArea(1, 40);
+        planTimeJTA.setEnabled(false);
+        planTimeJTA.setText("00:00-00:00");
+
+        planDescribeJTA = new JTextArea(8, 40);
+        planDescribeJTA.setLineWrap(true);
+        planDescribeJTA.setWrapStyleWord(true);
+        planDescribeJTA.setEnabled(false);
+        planDescribeJTA.setText("暂无进行中的计划");
+
 
         planTitle.add(planTitleJLabel);
+        planTitle.add(planTitleJTA);
+
         planTime.add(planTimeJLabel);
+        planTime.add(planTimeJTA);
+
         planDescribe.add(planDescribeJLabel);
+        planDescribe.add(planDescribeJTA);
 //        planTitle.setMinimumSize(new Dimension(300, 100));
 //        planTime.setMinimumSize(new Dimension(300, 100));
 //        planDescribe.setMinimumSize(new Dimension(300, 200));
-        BERoundBorder border = new BERoundBorder(new Color(0xa1,0xc4,0xfd),6);
+        BERoundBorder border = new BERoundBorder(color,6);
         planTitle.setBorder(border);
         planTime.setBorder(border);
         planDescribe.setBorder(border);
@@ -46,43 +70,13 @@ public class RunningPlanBox {
 
     public void updateRunningPlanBox(Plan plan) {
         if (plan == null) {
-            planTitleJLabel.setText("暂无进行中的计划");
-            planTimeJLabel.setText("00:00-00:00");
-            planDescribeJLabel.setText("暂无进行中的计划");
+            planTitleJTA.setText("暂无进行中的计划");
+            planTimeJTA.setText("00:00-00:00");
+            planDescribeJTA.setText("暂无进行中的计划");
         } else {
-            planTitleJLabel.setText(plan.getPlanTitle());
-            planTimeJLabel.setText(plan.getStringPlanTime());
-            try {
-                jLabelLineWrap(planDescribeJLabel, "<html>" + plan.getPlanDescribe() + "</html>");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            planTitleJTA.setText(plan.getPlanTitle());
+            planTimeJTA.setText(plan.getStringPlanTime());
+            planDescribeJTA.setText(plan.getPlanDescribe());
         }
-    }
-
-    public void jLabelLineWrap(JLabel jLabel, String longString)
-            throws InterruptedException {
-        StringBuilder builder = new StringBuilder("");
-        char[] chars = longString.toCharArray();
-        FontMetrics fontMetrics = jLabel.getFontMetrics(jLabel.getFont());
-        int start = 0;
-        int len = 0;
-        while (start + len < longString.length()) {
-            while (true) {
-                len++;
-                if (start + len > longString.length())break;
-                if (fontMetrics.charsWidth(chars, start, len)
-                        > jLabel.getWidth()) {
-                    break;
-                }
-            }
-            System.out.println("-------------------");
-            builder.append(chars, start, len-1).append("<br/>");
-            start = start + len - 1;
-            len = 0;
-        }
-        builder.append(chars, start, longString.length()-start);
-        builder.append("");
-        jLabel.setText(builder.toString());
     }
 }

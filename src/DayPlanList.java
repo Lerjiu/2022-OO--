@@ -7,8 +7,8 @@ public class DayPlanList implements Serializable {
     private ArrayList<Plan> dayPlanList = new ArrayList<>();
     private Calendar thisDay;
 
-    public DayPlanList(Calendar thisDay) {
-        this.thisDay = thisDay;
+    public DayPlanList() {
+        this.thisDay = Calendar.getInstance();
     }
 
     public void addDayPlan(Plan plan) {
@@ -23,7 +23,6 @@ public class DayPlanList implements Serializable {
         }
         return false;
     }
-
 
     public void clear() {
         dayPlanList.clear();

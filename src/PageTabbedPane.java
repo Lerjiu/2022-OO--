@@ -3,21 +3,21 @@ import javax.swing.*;
 public class PageTabbedPane {
     private JTabbedPane pageTabbedPane;
     private Box todayPlanBox;
-    private Box historyPlanBox;
+    private JScrollPane historyPlanJScrollPane;
     private Box countPlanBox;
-    private Box runningPlanBox;
+    private JSplitPane runningPlanSplitPane;
 
-    public PageTabbedPane(Box todayPlanBox, Box historyPlanBox, Box countPlanBox, Box runningPlanBox) {
+    public PageTabbedPane(Box todayPlanBox, JScrollPane historyPlanJScrollPane, Box countPlanBox, JSplitPane runningPlanSplitPane) {
         this.todayPlanBox = todayPlanBox;
-        this.historyPlanBox = historyPlanBox;
+        this.historyPlanJScrollPane = historyPlanJScrollPane;
         this.countPlanBox = countPlanBox;
-        this.runningPlanBox = runningPlanBox;
+        this.runningPlanSplitPane = runningPlanSplitPane;
 
         pageTabbedPane = new JTabbedPane(JTabbedPane.LEFT);
         pageTabbedPane.add("今日计划", todayPlanBox);
-        pageTabbedPane.add("历史计划", historyPlanBox);
+        pageTabbedPane.add("历史计划", historyPlanJScrollPane);
         pageTabbedPane.add("计划统计", countPlanBox);
-        pageTabbedPane.add("当前计划", runningPlanBox);
+        pageTabbedPane.add("当前计划", runningPlanSplitPane);
     }
 
     public JTabbedPane getPageTabbedPane() {
