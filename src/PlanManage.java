@@ -10,23 +10,51 @@ public class PlanManage {
     private static PlanTable todayPlanTable;
     private static DayPlanList todayPlanList = new DayPlanList();
     private static File todayPlanFile;
+    private static int historyDayPlanNum = 0;
+    private static int historyPlanNum = 0;
+    private static int historyPlanFinishNum = 0;
+    private static int historyDayPlanFinishNum = 0;
 
-    private static void getDayPlan(File file, PlanAddible planAddible) {
+    private static int tmp_dayPlanNum = 0;
+    private static int tmp_dayPlanFinishNum = 0;
+
+    private static boolean getDayPlan(File file, PlanAddible planAddible) {
         DayPlanList dayPlanList = null;
+        ObjectInputStream objectInputStream = null;
+        if (file.length() == 0) {
+            return false;
+        }
         try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(
-                    new FileInputStream(file));
+            objectInputStream = new ObjectInputStream(new FileInputStream(file));
+        } catch (EOFException e) {
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
 
+        try {
             dayPlanList = (DayPlanList) objectInputStream.readObject();
-            objectInputStream.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            return;
+            return false;
+        }
+
+        try {
+            objectInputStream.close();
+            System.out.println("close");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         for (int i = 0; i < dayPlanList.size(); i++) {
             planAddible.addPlan(dayPlanList.get(i));
         }
+
+        tmp_dayPlanNum = dayPlanList.size();
+        tmp_dayPlanFinishNum = dayPlanList.getPlanFinishNum();
+
+        return true;
     }
 
     public static String getPlanFileName(Calendar day, boolean withSuffix) {
@@ -65,6 +93,7 @@ public class PlanManage {
 
     //planTable->file
     public static void updateDayPlanList() {
+        System.out.println("update");
         todayPlanList.clear();
         todayPlanTable.updatePlanToDayPlanList(todayPlanList);
 
@@ -94,14 +123,12 @@ public class PlanManage {
 
         ArrayList<File> planFiles = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("^.*\\.plan$");
-        Matcher matcher;
         for (File file : files) {
             if (file.getName().equals(getPlanFileName(Calendar.getInstance(), true)))
                 continue;
-            matcher = pattern.matcher(file.getName());
-            if (matcher.matches()) {
-                System.out.println("match");
+
+            if (isPlanFile(file)) {
+//                System.out.println("match");
                 planFiles.add(file);
             }
         }
@@ -113,15 +140,55 @@ public class PlanManage {
             }
         });
 
+        historyDayPlanNum = planFiles.size();
+
         for (File file : planFiles) {
             HistoryPlanTable historyPlanTable = new HistoryPlanTable();
-            getDayPlan(file, historyPlanTable);
+            if (!getDayPlan(file, historyPlanTable)) {
+                file.delete();
+                historyDayPlanNum--;
+                continue;
+            }
+            historyPlanNum += tmp_dayPlanNum;
+            historyPlanFinishNum += tmp_dayPlanFinishNum;
+            if ((tmp_dayPlanFinishNum == tmp_dayPlanNum) && (tmp_dayPlanFinishNum != 0)) {
+                historyDayPlanFinishNum++;
+            }
+            tmp_dayPlanNum = 0;
+            tmp_dayPlanFinishNum = 0;
             jTabbedPane.add(file.getName().replace(".plan", ""), historyPlanTable.getPlanTableBox());
 //            System.out.println("add");
         }
 
-//        for (int i = 0; i < 20; i++) {
-//            jTabbedPane.add(String.format("%d", i), Box.createHorizontalBox());
-//        }
+    }
+
+    public static int getHistoryDayPlanNum() {
+        return historyDayPlanNum;
+    }
+
+    public static int getHistoryPlanNum() {
+        return historyPlanNum;
+    }
+
+    public static int getHistoryPlanFinishNum() {
+        return historyPlanFinishNum;
+    }
+
+    public static int getHistoryDayPlanFinishNum() {
+        return historyDayPlanFinishNum;
+    }
+
+    public static double getHistoryDayPlanFinishRate() {
+        return historyDayPlanFinishNum / historyDayPlanNum;
+    }
+
+    public static double getHistoryPlanFinishRate() {
+        return historyPlanFinishNum / historyPlanNum;
+    }
+
+    public static boolean isPlanFile(File file) {
+        Pattern pattern = Pattern.compile("^.*\\.plan$");
+        Matcher matcher = pattern.matcher(file.getName());;
+        return matcher.matches();
     }
 }

@@ -122,7 +122,12 @@ public class Test {
         });
         JScrollPane historyPlanJScrollPane = new JScrollPane(historyPlanJTabbedPane);
 
-        PageTabbedPane pageTabbedPane = new PageTabbedPane(box, historyPlanJScrollPane, Box.createHorizontalBox(), runningPlanSplitPane);
+        PlanManage.getTodayPlan(plans);
+        PlanManage.getHistoryPlan(historyPlanJTabbedPane);
+
+        CountHistoryPlanBox countHistoryPlanBox = new CountHistoryPlanBox();
+
+        PageTabbedPane pageTabbedPane = new PageTabbedPane(box, historyPlanJScrollPane, countHistoryPlanBox.getCountHistoryPlanBox(), runningPlanSplitPane);
         jFrame.add(pageTabbedPane.getPageTabbedPane());
 
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -135,7 +140,8 @@ public class Test {
 
             @Override
             public void run() {
-                plans.checkPlanStatus();
+                boolean changed = false;
+                changed = plans.checkPlanStatus();
                 currentTimeBox.repaintClock();
 
                 newRunningPlan = plans.getRunningPlan();
@@ -145,13 +151,15 @@ public class Test {
                     runningPlanBox.updateRunningPlanBox(plans.getRunningPlan());
                 }
                 oldRunningPlan = newRunningPlan;
+
+                if (changed) {
+                    System.out.println("changed");
+                    PlanManage.updateDayPlanList();
+                }
             }
         };
 
         new Timer().schedule(checkPlanStatus, 0, 1000);
 
-        PlanManage.getTodayPlan(plans);
-
-        PlanManage.getHistoryPlan(historyPlanJTabbedPane);
     }
 }

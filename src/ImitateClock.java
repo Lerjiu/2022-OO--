@@ -11,10 +11,10 @@ public class ImitateClock extends JComponent {
         Color lightGreen = new Color(0x59, 0xba, 0x80);
         //获取当前宽度
         int width=getWidth();
-        System.out.println("width:" + width);
+//        System.out.println("width:" + width);
         //获取当高度
         int height=getHeight();
-        System.out.println("height:" + height);
+//        System.out.println("height:" + height);
         //钟表半径初始化
         int r = 0;
         //选择高度和宽度较小的一个作为半径抉择标准

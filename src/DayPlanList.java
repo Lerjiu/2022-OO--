@@ -15,6 +15,15 @@ public class DayPlanList implements Serializable {
         dayPlanList.add(plan);
     }
 
+    public int getPlanFinishNum() {
+        int num = 0;
+        for (Plan plan : dayPlanList) {
+            if (plan.getPlanStatus() == Plan.FINISHED) {
+                num++;
+            }
+        }
+        return num;
+    }
 
     public boolean isSameDay(Calendar now) {
         if (thisDay.get(Calendar.YEAR) == now.get(Calendar.YEAR)

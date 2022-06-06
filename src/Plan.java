@@ -216,12 +216,14 @@ public class Plan implements Serializable {
                     if (ret == JOptionPane.YES_OPTION) {
                         planStatus = FINISHED;
                         planTable.updatePlanTable();
+                        PlanManage.updateDayPlanList();
                     }
                 } else if (planStatus == Plan.FINISHED) {
                     JOptionPane.showMessageDialog(planTable.getFrame(), "计划已经完成过了");
                 } else if (planStatus == Plan.RUNNING) {
                     planStatus = FINISHED;
                     planTable.updatePlanTable();
+                    PlanManage.updateDayPlanList();
                     JOptionPane.showMessageDialog(planTable.getFrame(), "完成了该计划，向下一个目标加油！");
                 }
             }
