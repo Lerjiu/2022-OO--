@@ -7,7 +7,7 @@ import java.sql.*;
 import java.text.MessageFormat;
 
 /**
- * 用户Dao类
+ * 用户Dao类,包含用户注册函数和用户登录函数
  * @author 周文瑞 20373804
  */
 public class userDao {
@@ -30,6 +30,8 @@ public class userDao {
             resultUser.setUid(rs.getInt("uid"));
             resultUser.setUserName(rs.getString("uname"));
             resultUser.setPassword(rs.getString("passwd"));
+            resultUser.setPlanFinishNum(rs.getInt("planFinishNum"));
+            resultUser.setDayPlanFinishNum(rs.getInt("dayPlanFinishNum"));
             System.out.println("登录成功!");
         }
         pstmt.close();
@@ -40,8 +42,9 @@ public class userDao {
      * 用户注册函数
      * @param con 连接数据库的Connection类
      * @param u 用户类
-     * @return
+     * @return 返回值为1时注册成功,并且创建属于该用户的文件表,返回0时注册失败
      * @throws Exception
+     * @author: 周文瑞 20373804
      */
     public int register (Connection con,user u)throws Exception{
         String sql = "INSERT INTO user(uname,passwd) VALUES(?,?)";
@@ -76,6 +79,54 @@ public class userDao {
         return result;
     }
 
+    /**
+     * 更新指定用户的planFinishNum
+     * @param con 连接数据库的Connection类
+     * @param u 登录用户
+     * @return true更新planFinishNum成功,否则失败
+     * @throws Exception
+     */
+    public boolean setPlanFinishNum(Connection con, user u)throws Exception{
+        String sql = "UPDATE user SET planFinishNum = ? WHERE uname = ?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1,u.getPlanFinishNum());
+        pstmt.setString(2,u.getUserName());
+        if ( pstmt.executeUpdate() <= 0 ) return false;
+        return true;
+    }
+
+    /**
+     * 更新指定用户的DayPlanFinishNum
+     * @param con 连接数据库的Connection类
+     * @param u 登录用户
+     * @return true更新DayPlanFinishNum成功,否则失败
+     * @throws Exception
+     */
+    public boolean setDayFinishNum(Connection con, user u)throws Exception{
+        String sql = "UPDATE user SET dayPlanFinishNum = ? WHERE uname = ?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setInt(1,u.getDayPlanFinishNum());
+        pstmt.setString(2,u.getUserName());
+        if ( pstmt.executeUpdate() <= 0 ) return false;
+        return true;
+    }
+
+    /**
+     * 修改用户密码的接口,只是单纯操作数据库,未作任何条件判断
+     * @param con 连接数据库的Connection类
+     * @param u 登录用户
+     * @param newPasswd 新密码
+     * @return 为布尔值, true表示修改成功, false表示修改失败
+     * @throws Exception
+     */
+    public boolean changePassWord(Connection con, user u,String newPasswd )throws Exception{
+        String sql = "UPDATE user SET passwd = ? WHERE uname = ?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setString(1,newPasswd);
+        pstmt.setString(2,u.getUserName());
+        if ( pstmt.executeUpdate() <= 0 ) return false;
+        return true;
+    }
 /* 这是一个测试方法
     public static void main(String[] args){
         user u1 = new user();
