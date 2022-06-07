@@ -24,49 +24,11 @@ public class DbUtil {
     }
 
     /**
-     * @describe  增删资源的关闭
+     * @describe  断开数据库,建议不用数据库时可以断开
      * @param con
      */
-    public static void closeRecourse(Connection con, PreparedStatement ps){
-        try{
-            if(ps != null)
-                ps.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        try{
-            if(con != null)
-                con.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @describe 查询资源的关闭
-     * @param con
-     * @param ps
-     * @param rs
-     */
-    public static void closeRecourse(Connection con, PreparedStatement ps, ResultSet rs){
-        try {
-            if(con != null)
-                con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            if(ps != null)
-                ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            if(rs != null)
-                rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void disConnection(Connection con)throws Exception{
+        con.close();
     }
     /*
        public static void main(String[] args){
