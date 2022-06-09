@@ -45,27 +45,27 @@ public class CountHistoryPlanBox {
 
         dayPlanNumJTA = new JTextArea(1, 10);
         dayPlanNumJTA.setEnabled(false);
-        dayPlanNumJTA.setText(String.format("%5d", PlanManage.getHistoryDayPlanNum()));
+        dayPlanNumJTA.setText(String.format("%d", PlanManage.getHistoryDayPlanNum()));
 
         planNumJTA = new JTextArea(1, 10);
         planNumJTA.setEnabled(false);
-        planNumJTA.setText(String.format("%5d", PlanManage.getHistoryPlanNum()));
+        planNumJTA.setText(String.format("%d", PlanManage.getHistoryPlanNum()));
 
         dayPlanFinishNumJTA = new JTextArea(1, 10);
         dayPlanFinishNumJTA.setEnabled(false);
-        dayPlanFinishNumJTA.setText(String.format("%5d", PlanManage.getHistoryDayPlanFinishNum()));
+        dayPlanFinishNumJTA.setText(String.format("%d", PlanManage.getHistoryDayPlanFinishNum()));
 
         planFinishNumJTA = new JTextArea(1, 10);
         planFinishNumJTA.setEnabled(false);
-        planFinishNumJTA.setText(String.format("%5d", PlanManage.getHistoryPlanFinishNum()));
+        planFinishNumJTA.setText(String.format("%d", PlanManage.getHistoryPlanFinishNum()));
 
         dayPlanFinishRateJTA = new JTextArea(1, 10);
         dayPlanFinishRateJTA.setEnabled(false);
-        dayPlanFinishRateJTA.setText(String.format("%2.2f%%", PlanManage.getHistoryDayPlanFinishRate()));
+        dayPlanFinishRateJTA.setText(String.format("%.2f%%", PlanManage.getHistoryDayPlanFinishRate()));
 
         planFinishRateJTA = new JTextArea(1, 10);
         planFinishRateJTA.setEnabled(false);
-        planFinishRateJTA.setText(String.format("%2.2f%%", PlanManage.getHistoryPlanFinishRate()));
+        planFinishRateJTA.setText(String.format("%.2f%%", PlanManage.getHistoryPlanFinishRate()));
 
         dayPlanNumPanel.add(dayPlanNumLabel);
         dayPlanNumPanel.add(dayPlanNumJTA);
@@ -94,8 +94,8 @@ public class CountHistoryPlanBox {
 
         leftCountHistoryPlanBox.setMinimumSize(new Dimension(500, 500));
 
-        Color lightGreen = new Color(0x59, 0xba, 0x80);
-        Color gray = new Color(0xa3,0xab,0xbd);
+        Color lightGreen = new Color(0xc1,0xdf,0xc4);
+        Color gray = new Color(0xcf,0xd9,0xdf);
 
         PieChart dayPlanFinishChart = new PieChart();
         dayPlanFinishChart.addPart(PlanManage.getHistoryDayPlanFinishNum(), null, lightGreen);

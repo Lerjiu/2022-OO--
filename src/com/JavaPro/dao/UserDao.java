@@ -1,7 +1,6 @@
 package com.JavaPro.dao;
 
-import com.JavaPro.model.user;
-import com.JavaPro.util.DbUtil;
+import com.JavaPro.model.User;
 
 import java.sql.*;
 import java.text.MessageFormat;
@@ -10,7 +9,7 @@ import java.text.MessageFormat;
  * 用户Dao类
  * @author 周文瑞 20373804
  */
-public class userDao {
+public class UserDao {
     /**
      * 用户登录函数
      * @param con 连接数据库的Connection类
@@ -18,15 +17,15 @@ public class userDao {
      * @return resultUser 用户类
      * @throws Exception
      */
-    public user login(Connection con,user u)throws Exception{
-        user resultUser = null;
+    public User login(Connection con, User u)throws Exception{
+        User resultUser = null;
         String sql = "SELECT * FROM user WHERE uname = ? AND passwd = ?";
         PreparedStatement pstmt =  con.prepareStatement(sql);
         pstmt.setString(1,u.getUserName()); //设置问号1内容
         pstmt.setString(2,u.getPassword()); //设置问号2内容
         ResultSet rs =  pstmt.executeQuery();   //执行sql语句,返回一个结果集
         if(rs.next()) {
-            resultUser = new user();
+            resultUser = new User();
             resultUser.setUid(rs.getInt("uid"));
             resultUser.setUserName(rs.getString("uname"));
             resultUser.setPassword(rs.getString("passwd"));
@@ -43,7 +42,7 @@ public class userDao {
      * @return
      * @throws Exception
      */
-    public int register (Connection con,user u)throws Exception{
+    public int register (Connection con, User u)throws Exception{
         String sql = "INSERT INTO user(uname,passwd) VALUES(?,?)";
         String UID;
         int result;

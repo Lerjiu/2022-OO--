@@ -1,11 +1,13 @@
 package com.JavaPro.model;
 
+import java.io.Serializable;
+
 /**
  * 用户实体
  * @author: 周文瑞_20373804
  *
  */
-public class user {
+public class User implements Serializable {
     private int uid;// 编号
     private String userName; // 名字
     private String password; //密码

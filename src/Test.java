@@ -127,7 +127,9 @@ public class Test {
 
         CountHistoryPlanBox countHistoryPlanBox = new CountHistoryPlanBox();
 
-        PageTabbedPane pageTabbedPane = new PageTabbedPane(box, historyPlanJScrollPane, countHistoryPlanBox.getCountHistoryPlanBox(), runningPlanSplitPane);
+        PersonalCenter personalCenter = new PersonalCenter(jFrame);
+
+        PageTabbedPane pageTabbedPane = new PageTabbedPane(box, historyPlanJScrollPane, countHistoryPlanBox.getCountHistoryPlanBox(), runningPlanSplitPane, personalCenter.getPersonalCenterTabbedPane());
         jFrame.add(pageTabbedPane.getPageTabbedPane());
 
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -161,5 +163,7 @@ public class Test {
 
         new Timer().schedule(checkPlanStatus, 0, 1000);
 
+        if (UserManage.loadUser()) UserManage.login();
+        personalCenter.updatePersonalCenter();
     }
 }

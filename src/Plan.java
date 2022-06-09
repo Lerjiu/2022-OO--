@@ -228,6 +228,8 @@ public class Plan implements Serializable {
                 }
             }
         });
+        finishButton.setEnabled(false);
+        finishButton.setEnabled(true);
     }
 
     public void removeListenerForButton() {

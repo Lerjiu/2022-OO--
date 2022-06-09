@@ -179,11 +179,13 @@ public class PlanManage {
     }
 
     public static double getHistoryDayPlanFinishRate() {
-        return historyDayPlanFinishNum / historyDayPlanNum;
+        System.out.println(historyDayPlanFinishNum);
+        return 100.0 * historyDayPlanFinishNum / historyDayPlanNum;
     }
 
     public static double getHistoryPlanFinishRate() {
-        return historyPlanFinishNum / historyPlanNum;
+        System.out.println(historyPlanFinishNum);
+        return 100.0 * historyPlanFinishNum / historyPlanNum;
     }
 
     public static boolean isPlanFile(File file) {

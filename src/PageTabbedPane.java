@@ -6,18 +6,21 @@ public class PageTabbedPane {
     private JScrollPane historyPlanJScrollPane;
     private Box countPlanBox;
     private JSplitPane runningPlanSplitPane;
+    private JTabbedPane personalCenter;
 
-    public PageTabbedPane(Box todayPlanBox, JScrollPane historyPlanJScrollPane, Box countPlanBox, JSplitPane runningPlanSplitPane) {
+    public PageTabbedPane(Box todayPlanBox, JScrollPane historyPlanJScrollPane, Box countPlanBox, JSplitPane runningPlanSplitPane, JTabbedPane personalCenter) {
         this.todayPlanBox = todayPlanBox;
         this.historyPlanJScrollPane = historyPlanJScrollPane;
         this.countPlanBox = countPlanBox;
         this.runningPlanSplitPane = runningPlanSplitPane;
+        this.personalCenter = personalCenter;
 
         pageTabbedPane = new JTabbedPane(JTabbedPane.LEFT);
         pageTabbedPane.add("今日计划", todayPlanBox);
         pageTabbedPane.add("历史计划", historyPlanJScrollPane);
         pageTabbedPane.add("计划统计", countPlanBox);
         pageTabbedPane.add("当前计划", runningPlanSplitPane);
+        pageTabbedPane.add("个人中心", personalCenter);
     }
 
     public JTabbedPane getPageTabbedPane() {
