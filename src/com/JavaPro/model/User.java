@@ -11,13 +11,30 @@ public class User implements Serializable {
     private int uid;// 编号
     private String userName; // 名字
     private String password; //密码
-
+    private int planFinishNum;
+    private int dayPlanFinishNum;
     public int getUid() {
         return uid;
     }
 
     public void setUid(int uid) {
         this.uid = uid;
+    }
+
+    public int getPlanFinishNum() {
+        return planFinishNum;
+    }
+
+    public void setPlanFinishNum(int planFinishNum) {
+        this.planFinishNum = planFinishNum;
+    }
+
+    public int getDayPlanFinishNum() {
+        return dayPlanFinishNum;
+    }
+
+    public void setDayPlanFinishNum(int dayPlanFinishNum) {
+        this.dayPlanFinishNum = dayPlanFinishNum;
     }
 
     public String getUserName() {
