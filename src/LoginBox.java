@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 public class LoginBox {
     private Box loginBox;
@@ -90,9 +89,18 @@ public class LoginBox {
                     JOptionPane.showMessageDialog(jFrame, "请检查密码是否符合规则");
                 } else {
                     UserManage.setUser(nameField.getText(), String.valueOf(passwordField.getPassword()));
+//                    System.out.println("setuser" + UserManage.getUser().getUserName());
                     if (UserManage.login()) {
                         p.updatePersonalCenter();
                         JOptionPane.showMessageDialog(jFrame, "登陆成功");
+
+                        //手动登录后，询问本地文件是否属于该登录账号，进行清除或上传
+                        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(jFrame, "本地数据是否属于该账号？", "验证", JOptionPane.YES_NO_OPTION)) {
+                            PlanManage.uploadLocalPlanFile();
+                        } else {
+                            PlanManage.deleteLocalPlanFile();
+                        }
+                        PlanManage.getRemotePlanFile();
                     } else {
                         UserManage.resetUser();
                         JOptionPane.showMessageDialog(jFrame, "登陆失败，请检查用户名和密码是否正确");

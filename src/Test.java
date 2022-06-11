@@ -163,7 +163,15 @@ public class Test {
 
         new Timer().schedule(checkPlanStatus, 0, 1000);
 
-        if (UserManage.loadUser()) UserManage.login();
-        personalCenter.updatePersonalCenter();
+        if (UserManage.loadUser()) {
+            if (UserManage.login()) {
+                personalCenter.updatePersonalCenter();
+            } else {
+                JOptionPane.showMessageDialog(jFrame, "登陆失败，请检查用户名和密码是否正确");
+            }
+        }
+
+
+//        PlanManage.deleteLocalPlanFile();
     }
 }

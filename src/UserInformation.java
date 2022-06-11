@@ -108,7 +108,7 @@ public class UserInformation {
         if (UserManage.getUser() == null) {
             planFinishBetterJTA.setText("暂无数据");
         } else {
-            planFinishBetterJTA.setText(String.format("%.2f%%", 10.0));
+            planFinishBetterJTA.setText(String.format("%.2f%%", UserManage.planFinishBetterThan()));
         }
 
         if (UserManage.getUser() == null) {
@@ -120,7 +120,7 @@ public class UserInformation {
         if (UserManage.getUser() == null) {
             dayPlanFinishBetterJTA.setText("暂无数据");
         } else {
-            dayPlanFinishBetterJTA.setText(String.format("%.2f%%", 1.1));
+            dayPlanFinishBetterJTA.setText(String.format("%.2f%%", UserManage.dayPlanFinishBetterThan()));
         }
     }
 }

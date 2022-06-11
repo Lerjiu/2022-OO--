@@ -1,4 +1,5 @@
 import com.JavaPro.dao.UserDao;
+import com.JavaPro.dao.PlanFileDao;
 import com.JavaPro.model.User;
 import com.JavaPro.util.DbUtil;
 
@@ -10,6 +11,7 @@ public class UserManage {
     private static User user = null;
     private static boolean isLogin = false;
     private static UserDao userDao = new UserDao();
+    private static PlanFileDao planFileDao = new PlanFileDao();
 
     public static boolean loadUser() {
         File userFile = new File("user");
@@ -31,6 +33,7 @@ public class UserManage {
     }
 
     public static User getUser() {
+        if (user != null) System.out.println("getUser" + user.getUserName());
         return user;
     }
 
@@ -54,7 +57,8 @@ public class UserManage {
 
     public static boolean login() {
         try {
-            userDao.login(DbUtil.getConnection(), user);
+            if (userDao.login(DbUtil.getConnection(), user) == null)
+                return false;
             writeUserFile();
             isLogin = true;
             return true;
@@ -70,7 +74,8 @@ public class UserManage {
 
     public static boolean register() {
         try {
-            userDao.register(DbUtil.getConnection(), user);
+            if (userDao.register(DbUtil.getConnection(), user) == 0)
+                return false;
             return true;
         } catch (Exception e) {
             return false;
@@ -109,6 +114,26 @@ public class UserManage {
     private static void deleteUserFile() {
         File userFile = new File("user");
         userFile.delete();
+    }
+
+    public static double dayPlanFinishBetterThan() {
+        user.setDayPlanFinishNum(PlanManage.getHistoryDayPlanFinishNum());
+        try {
+            userDao.setDayFinishNum(DbUtil.getConnection(), user);
+            return userDao.getDayPlanFinishBetterThan(DbUtil.getConnection(), user);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public static double planFinishBetterThan() {
+        user.setPlanFinishNum(PlanManage.getHistoryPlanFinishNum());
+        try {
+            userDao.setPlanFinishNum(DbUtil.getConnection(), user);
+            return userDao.getPlanFinishBetterThan(DbUtil.getConnection(), user);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     public static boolean checkPassWordLegal(String passWord) {

@@ -85,7 +85,7 @@ public class UserDao {
      * @return true更新planFinishNum成功,否则失败
      * @throws Exception
      */
-    public boolean setPlanFinishNum(Connection con, user u)throws Exception{
+    public boolean setPlanFinishNum(Connection con, User u)throws Exception{
         String sql = "UPDATE user SET planFinishNum = ? WHERE uname = ?";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1,u.getPlanFinishNum());
@@ -101,7 +101,7 @@ public class UserDao {
      * @return true更新DayPlanFinishNum成功,否则失败
      * @throws Exception
      */
-    public boolean setDayFinishNum(Connection con, user u)throws Exception{
+    public boolean setDayFinishNum(Connection con, User u)throws Exception{
         String sql = "UPDATE user SET dayPlanFinishNum = ? WHERE uname = ?";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setInt(1,u.getDayPlanFinishNum());
@@ -118,13 +118,93 @@ public class UserDao {
      * @return 为布尔值, true表示修改成功, false表示修改失败
      * @throws Exception
      */
-    public boolean changePassWord(Connection con, user u,String newPasswd )throws Exception{
+    public boolean changePassWord(Connection con, User u,String newPasswd )throws Exception{
         String sql = "UPDATE user SET passwd = ? WHERE uname = ?";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setString(1,newPasswd);
         pstmt.setString(2,u.getUserName());
         if ( pstmt.executeUpdate() <= 0 ) return false;
         return true;
+    }
+
+    /**
+     * 获取该登录用户总完成计划数超越人数的百分数
+     * @Date 2022/06/10
+     * @param con 连接数据库的Connection类
+     * @param u 登录用户
+     * @return  函数返回的是一个浮点数,区间为[0,1)
+     * @throws Exception
+     */
+    public double getPlanFinishBetterThan(Connection con, User u) throws Exception{
+        int total;
+        int over;
+        String sql = "SELECT count(*) FROM user";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+        total = rs.getInt(1);
+        if ( total == 0 ) return 0;
+        rs.close();
+        pstmt.close();
+        String sql1 = "SELECT count(*) FROM user WHERE planFinishNum < ?";
+        PreparedStatement pstmt1 = con.prepareStatement(sql1);
+        pstmt1.setInt(1,u.getPlanFinishNum());
+        ResultSet rs1 = pstmt1.executeQuery();
+        rs1.next();
+        over = rs1.getInt(1);
+        rs1.close();
+        pstmt1.close();
+        return over / total;
+    }
+
+    /**
+     * 获取该登录用户完成计划天数超越人数的百分数
+     * @Date 2022/06/10
+     * @param con 连接数据库的Connection类
+     * @param u 登录用户
+     * @return  函数返回的是一个浮点数,区间为[0,1)
+     * @throws Exception
+     */
+    public double getDayPlanFinishBetterThan(Connection con, User u) throws Exception{
+        int total;
+        int over;
+        String sql = "SELECT count(*) FROM user";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+        total = rs.getInt(1);
+        if ( total == 0 ) return 0;
+        rs.close();
+        pstmt.close();
+        String sql1 = "SELECT count(*) FROM user WHERE dayPlanFinishNum < ?";
+        PreparedStatement pstmt1 = con.prepareStatement(sql1);
+        pstmt1.setInt(1,u.getDayPlanFinishNum());
+        ResultSet rs1 = pstmt1.executeQuery();
+        rs1.next();
+        over = rs1.getInt(1);
+        rs1.close();
+        pstmt1.close();
+        return over / total;
+    }
+
+    /**
+     * 该函数通过用户名来查找对应的uid
+     * @Date 2022/06/11
+     * @param con 连接数据库的Connection类
+     * @param name 被查询的用户名名字
+     * @return  查询成功时返回被查询用户的uid,查询失败时返回-1
+     * @throws Exception
+     */
+    public int getUidByName(Connection con, String name)throws Exception{
+        String sql = "SELECT uid FROM user WHERE uname = ?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setString(1,name);
+        ResultSet rs = pstmt.executeQuery();
+        if( rs.next() == false ) return -1;
+        int uid = rs.getInt(1);
+        rs.close();
+        pstmt.close();
+        return uid;
     }
 /* 这是一个测试方法
     public static void main(String[] args){

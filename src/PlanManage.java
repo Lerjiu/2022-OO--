@@ -1,3 +1,7 @@
+import com.JavaPro.dao.PlanFileDao;
+import com.JavaPro.model.PlanFile;
+import com.JavaPro.util.DbUtil;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
@@ -5,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PlanManage {
-    //命名：xxxx-xx-xx-plan
-    private static ArrayList<DayPlanList> allPlanList = new ArrayList<>();
+    //命名：xxxx-xx-xx-plan.plan
+    private static PlanFileDao planFileDao = new PlanFileDao();
     private static PlanTable todayPlanTable;
     private static DayPlanList todayPlanList = new DayPlanList();
     private static File todayPlanFile;
@@ -107,7 +111,8 @@ public class PlanManage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        //每次更改本地当天的文件后，都上传更改
+        updateRemotePlanFile();
     }
 
     public static void getHistoryPlan(JTabbedPane jTabbedPane) {
@@ -119,7 +124,7 @@ public class PlanManage {
         }
 //        System.out.println(directory.getAbsolutePath());
         File[] files = directory.listFiles();
-        System.out.println(files.length);
+//        System.out.println(files.length);
 
         ArrayList<File> planFiles = new ArrayList<>();
 
@@ -145,7 +150,7 @@ public class PlanManage {
         for (File file : planFiles) {
             HistoryPlanTable historyPlanTable = new HistoryPlanTable();
             if (!getDayPlan(file, historyPlanTable)) {
-                file.delete();
+                System.out.println("history file delete" + file.delete());
                 historyDayPlanNum--;
                 continue;
             }
@@ -192,5 +197,137 @@ public class PlanManage {
         Pattern pattern = Pattern.compile("^.*\\.plan$");
         Matcher matcher = pattern.matcher(file.getName());;
         return matcher.matches();
+    }
+
+    public static boolean deleteLocalPlanFile() {
+        File directory = new File("");
+        directory = new File(directory.getAbsolutePath());
+
+        File[] files = directory.listFiles();
+
+        for (File file : files) {
+            if (isPlanFile(file)) {
+                if (!file.delete()) {
+                    System.out.println("删除失败");
+                    return false;
+                }
+            }
+        }
+        System.out.println("finish deleteLocalPlanFile()");
+        return true;
+    }
+
+    public static boolean getRemotePlanFile() {
+        ArrayList<PlanFile> planFiles = new ArrayList<>();
+
+        try {
+            planFiles = planFileDao.getAllPlanFile(DbUtil.getConnection(), UserManage.getUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        for (PlanFile planFile : planFiles) {
+            File file = new File(planFile.getfName());
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(planFile.getContent());
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        System.out.println("finish getRemotePlanFile()");
+        return true;
+    }
+
+    public static boolean uploadLocalPlanFile() {
+        File directory = new File("");
+        directory = new File(directory.getAbsolutePath());
+
+        File[] files = directory.listFiles();
+
+        ArrayList<File> planFiles = new ArrayList<>();
+
+        for (File file : files) {
+            if (isPlanFile(file)) {
+                planFiles.add(file);
+            }
+        }
+
+        FileInputStream fileInputStream = null;
+        byte[] bytes = null;
+        for (File file : planFiles) {
+            PlanFile planFile = new PlanFile();
+            planFile.setFile(file);
+            planFile.setfName(file.getName());
+            try {
+                fileInputStream = new FileInputStream(file);
+                bytes = new byte[65536];
+                fileInputStream.read(bytes, 0, (int)file.length());
+                planFile.setContent(bytes);
+                fileInputStream.close();
+                if (planFileDao.planFileExist(DbUtil.getConnection(), UserManage.getUser(), planFile)) {
+                    planFileDao.updatePlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+                } else {
+                    planFileDao.insertPlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        System.out.println("finish uploadLocalPlanFile()");
+        return true;
+    }
+
+    public static boolean updateRemotePlanFile() {
+        File file = new File(getPlanFileName(Calendar.getInstance(), true));
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        PlanFile planFile = new PlanFile();
+        planFile.setFile(file);
+        planFile.setfName(file.getName());
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] bytes = new byte[65536];
+            fileInputStream.read(bytes, 0, (int) file.length());
+            planFile.setContent(bytes);
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            if (planFileDao.planFileExist(DbUtil.getConnection(), UserManage.getUser(), planFile)) {
+                planFileDao.updatePlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+            } else {
+                planFileDao.insertPlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        System.out.println("finish updateRemotePlanFile()");
+        return true;
     }
 }

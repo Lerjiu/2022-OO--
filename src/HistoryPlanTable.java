@@ -34,7 +34,7 @@ public class HistoryPlanTable implements PlanAddible {
     }
 
     public int addPlan(Plan plan) {
-        if (plan.getPlanStatus() == Plan.NOT_STARTED) {
+        if (plan.getPlanStatus() != Plan.FINISHED) {
             plan.setPlanStatus(Plan.UNFINISHED);
         }
         Object[] row = new Object[3];
