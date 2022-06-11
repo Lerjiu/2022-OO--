@@ -1,5 +1,8 @@
 import javax.swing.*;
 
+/**
+ * 用于显示个人中心的封装类
+ */
 public class PersonalCenter {
     private JTabbedPane personalCenterTabbedPane;
     private UserInformation userInformation;
@@ -9,6 +12,10 @@ public class PersonalCenter {
     private RegisterBox registerBox;
     private JFrame jFrame;
 
+    /**
+     * 构造时初始化
+     * @param jFrame 个人中心下辖模块的构建，需要提供父窗口
+     */
     public PersonalCenter(JFrame jFrame) {
         this.jFrame = jFrame;
 
@@ -29,6 +36,9 @@ public class PersonalCenter {
         logoutBox.addButtonListener(this);
     }
 
+    /**
+     * 更新该组件
+     */
     public void updatePersonalCenter() {
         userInformation.updateUserInformation();
         loginBox.updateLoginBox();
@@ -43,6 +53,10 @@ public class PersonalCenter {
         }
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public JTabbedPane getPersonalCenterTabbedPane() {
         return personalCenterTabbedPane;
     }

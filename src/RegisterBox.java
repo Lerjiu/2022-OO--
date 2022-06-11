@@ -2,10 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+/**
+ * 用于显示注册的封装类
+ */
 public class RegisterBox {
     private Box registerBox;
     private JPanel namePanel;
@@ -26,6 +26,10 @@ public class RegisterBox {
     private JPasswordField passwordField;
     private JFrame jFrame;
 
+    /**
+     * 构造时初始化
+     * @param jFrame 显示提示窗口等需要父窗口
+     */
     public RegisterBox(JFrame jFrame) {
         this.jFrame = jFrame;
 
@@ -99,14 +103,20 @@ public class RegisterBox {
         registerBox.add(registerButtonPanel);
     }
 
+    /**
+     * 更新该组件
+     */
     public void updateRegisterBox() {
         nameField.setText("");
         passwordField.setText("");
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getLoginBox() {
         return registerBox;
     }
-
 
 }

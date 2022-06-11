@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.geom.Arc2D;
 
+/**
+ * 扇形图的扇区的实体类
+ */
 public class Sector {
     private double amount;   //该块区域所代表的数量
     private int degree;     //根据amount经计算得到

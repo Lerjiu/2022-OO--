@@ -1,6 +1,9 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * 用于显示历史计划的封装类
+ */
 public class HistoryPlanTable implements PlanAddible {
     private static final Object[] columName = {"计划", "状态", "时间"};
     private JTable planTable;
@@ -8,6 +11,9 @@ public class HistoryPlanTable implements PlanAddible {
     private PlanTableRenderer planTableRenderer;
     private Box planTableBox;
 
+    /**
+     * 构造时初始化
+     */
     public HistoryPlanTable() {
         model = new DefaultTableModel(columName, 0);
         planTable = new JTable(model) {
@@ -33,8 +39,13 @@ public class HistoryPlanTable implements PlanAddible {
         planTableBox.add(Box.createVerticalGlue());
     }
 
+    /**
+     * 添加plan
+     * @param plan
+     * @return 该plan插入的位置
+     */
     public int addPlan(Plan plan) {
-        if (plan.getPlanStatus() == Plan.NOT_STARTED) {
+        if (plan.getPlanStatus() != Plan.FINISHED) {
             plan.setPlanStatus(Plan.UNFINISHED);
         }
         Object[] row = new Object[3];
@@ -68,6 +79,10 @@ public class HistoryPlanTable implements PlanAddible {
         return model.getRowCount() - 1;
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getPlanTableBox() {
         return planTableBox;
     }

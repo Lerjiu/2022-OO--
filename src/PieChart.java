@@ -1,4 +1,3 @@
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -7,15 +6,23 @@ import java.awt.RenderingHints;
 import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JPanel;
 
+/**
+ * 用于显示扇形统计图的封装类
+ */
 public class PieChart extends JPanel
 {
     //数据：pie表示一小块
     private List<Sector>partList =new ArrayList<>();
 
+    /**
+     * 添加sector
+     * @param amount
+     * @param tag
+     * @param color
+     */
     //color如果为null，则由内部自动分配
     public void addPart(double amount,Object tag,Color color)
     {
@@ -26,6 +33,9 @@ public class PieChart extends JPanel
         partList.add(p);
     }
 
+    /**
+     * 根据现有sector进行角度的分配
+     */
     //根据每一个饼的数值，分配角度，自动分配颜色
     private void calculate()
     {
@@ -71,6 +81,10 @@ public class PieChart extends JPanel
         }
     }
 
+    /**
+     * 重写绘制组件的paintComponent方法
+     * @param g
+     */
     @Override
     protected void paintComponent(Graphics g)
     {

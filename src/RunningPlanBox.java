@@ -3,6 +3,9 @@ import jb2011.lnf.beautyeye.widget.border.BERoundBorder;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * 用于显示正在进行计划的封装类
+ */
 public class RunningPlanBox {
     private Box showRunningPlanBox;
     private JPanel planTitle;
@@ -15,6 +18,9 @@ public class RunningPlanBox {
     private JTextArea planTimeJTA;
     private JTextArea planDescribeJTA;
 
+    /**
+     * 构造时初始化
+     */
     public RunningPlanBox() {
         Color color = new Color(0xa1,0xc4,0xfd);
 
@@ -64,10 +70,18 @@ public class RunningPlanBox {
         showRunningPlanBox.setMinimumSize(new Dimension(500, 500));
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getRunningPlanBox() {
         return showRunningPlanBox;
     }
 
+    /**
+     * 更新该组件
+     * @param plan
+     */
     public void updateRunningPlanBox(Plan plan) {
         if (plan == null) {
             planTitleJTA.setText("暂无进行中的计划");

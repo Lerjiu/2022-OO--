@@ -1,12 +1,22 @@
+import com.JavaPro.dao.PlanFileDao;
+import com.JavaPro.model.PlanFile;
+import com.JavaPro.util.DbUtil;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 用于管理计划
+ * 进行应用界面所需plan数据的加载
+ * 进行本地plan文件的维护
+ * 进行服务器plan数据的维护
+ */
 public class PlanManage {
-    //命名：xxxx-xx-xx-plan
-    private static ArrayList<DayPlanList> allPlanList = new ArrayList<>();
+    //命名：xxxx-xx-xx-plan.plan
+    private static PlanFileDao planFileDao = new PlanFileDao();
     private static PlanTable todayPlanTable;
     private static DayPlanList todayPlanList = new DayPlanList();
     private static File todayPlanFile;
@@ -18,6 +28,12 @@ public class PlanManage {
     private static int tmp_dayPlanNum = 0;
     private static int tmp_dayPlanFinishNum = 0;
 
+    /**
+     * 从file中构造出dayPlanList对象，向planAddible中加载一天的计划
+     * @param file
+     * @param planAddible
+     * @return 执行是否成功
+     */
     private static boolean getDayPlan(File file, PlanAddible planAddible) {
         DayPlanList dayPlanList = null;
         ObjectInputStream objectInputStream = null;
@@ -57,6 +73,12 @@ public class PlanManage {
         return true;
     }
 
+    /**
+     * 根据与日期返回规定的文件名，选择是否带后缀名
+     * @param day
+     * @param withSuffix
+     * @return 规范的文件名
+     */
     public static String getPlanFileName(Calendar day, boolean withSuffix) {
         StringBuilder sb = new StringBuilder();
         sb.append(day.get(Calendar.YEAR));
@@ -71,6 +93,10 @@ public class PlanManage {
         return sb.toString();
     }
 
+    /**
+     * 启动应用后，从文件中为planTable恢复今日的计划
+     * @param planTable
+     */
     //file->planTable
     public static void getTodayPlan(PlanTable planTable) {
         todayPlanTable = planTable;
@@ -91,6 +117,9 @@ public class PlanManage {
         }
     }
 
+    /**
+     * 用户更改今日计划后，更新对应文件
+     */
     //planTable->file
     public static void updateDayPlanList() {
         System.out.println("update");
@@ -107,9 +136,14 @@ public class PlanManage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        //每次更改本地当天的文件后，都上传更改
+        updateRemotePlanFile();
     }
 
+    /**
+     * 应用启动后，从文件中为历史计划的显示加载数据
+     * @param jTabbedPane 按天显示历史计划的组件
+     */
     public static void getHistoryPlan(JTabbedPane jTabbedPane) {
         File directory = new File("");
         directory = new File(directory.getAbsolutePath());
@@ -119,7 +153,7 @@ public class PlanManage {
         }
 //        System.out.println(directory.getAbsolutePath());
         File[] files = directory.listFiles();
-        System.out.println(files.length);
+//        System.out.println(files.length);
 
         ArrayList<File> planFiles = new ArrayList<>();
 
@@ -145,7 +179,7 @@ public class PlanManage {
         for (File file : planFiles) {
             HistoryPlanTable historyPlanTable = new HistoryPlanTable();
             if (!getDayPlan(file, historyPlanTable)) {
-                file.delete();
+                System.out.println("history file delete" + file.delete());
                 historyDayPlanNum--;
                 continue;
             }
@@ -162,35 +196,212 @@ public class PlanManage {
 
     }
 
+    /**
+     *
+     * @return 返回创建了计划的天数
+     */
     public static int getHistoryDayPlanNum() {
         return historyDayPlanNum;
     }
 
+    /**
+     *
+     * @return 返回创建计划的个数
+     */
     public static int getHistoryPlanNum() {
         return historyPlanNum;
     }
 
+    /**
+     *
+     * @return 返回完成计划的个数
+     */
     public static int getHistoryPlanFinishNum() {
         return historyPlanFinishNum;
     }
 
+    /**
+     *
+     * @return 返回完成计划的天数
+     */
     public static int getHistoryDayPlanFinishNum() {
         return historyDayPlanFinishNum;
     }
 
+    /**
+     *
+     * @return 返回完成计划天数的比例
+     */
     public static double getHistoryDayPlanFinishRate() {
         System.out.println(historyDayPlanFinishNum);
         return 100.0 * historyDayPlanFinishNum / historyDayPlanNum;
     }
 
+    /**
+     *
+     * @return 返回完成计划个数的比例
+     */
     public static double getHistoryPlanFinishRate() {
         System.out.println(historyPlanFinishNum);
         return 100.0 * historyPlanFinishNum / historyPlanNum;
     }
 
+    /**
+     * 判断文件是不是.plan文件
+     * @param file
+     * @return 文件是不是.plan文件
+     */
     public static boolean isPlanFile(File file) {
         Pattern pattern = Pattern.compile("^.*\\.plan$");
         Matcher matcher = pattern.matcher(file.getName());;
         return matcher.matches();
+    }
+
+    /**
+     * 删除本地文件
+     * @return 删除是否成功
+     */
+    public static boolean deleteLocalPlanFile() {
+        File directory = new File("");
+        directory = new File(directory.getAbsolutePath());
+
+        File[] files = directory.listFiles();
+
+        for (File file : files) {
+            if (isPlanFile(file)) {
+                if (!file.delete()) {
+                    System.out.println("删除失败");
+                    return false;
+                }
+            }
+        }
+        System.out.println("finish deleteLocalPlanFile()");
+        return true;
+    }
+
+    /**
+     * 获取服务器文件到本地
+     * @return 是否成功
+     */
+    public static boolean getRemotePlanFile() {
+        ArrayList<PlanFile> planFiles = new ArrayList<>();
+
+        try {
+            planFiles = planFileDao.getAllPlanFile(DbUtil.getConnection(), UserManage.getUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        for (PlanFile planFile : planFiles) {
+            File file = new File(planFile.getfName());
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(planFile.getContent());
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        System.out.println("finish getRemotePlanFile()");
+        return true;
+    }
+
+    /**
+     * 上传本地文件到服务器
+     * @return 是否成功
+     */
+    public static boolean uploadLocalPlanFile() {
+        File directory = new File("");
+        directory = new File(directory.getAbsolutePath());
+
+        File[] files = directory.listFiles();
+
+        ArrayList<File> planFiles = new ArrayList<>();
+
+        for (File file : files) {
+            if (isPlanFile(file)) {
+                planFiles.add(file);
+            }
+        }
+
+        FileInputStream fileInputStream = null;
+        byte[] bytes = null;
+        for (File file : planFiles) {
+            PlanFile planFile = new PlanFile();
+            planFile.setFile(file);
+            planFile.setfName(file.getName());
+            try {
+                fileInputStream = new FileInputStream(file);
+                bytes = new byte[65536];
+                fileInputStream.read(bytes, 0, (int)file.length());
+                planFile.setContent(bytes);
+                fileInputStream.close();
+                if (planFileDao.planFileExist(DbUtil.getConnection(), UserManage.getUser(), planFile)) {
+                    planFileDao.updatePlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+                } else {
+                    planFileDao.insertPlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        System.out.println("finish uploadLocalPlanFile()");
+        return true;
+    }
+
+    /**
+     * 更新服务器数据
+     * @return 是否成功
+     */
+    public static boolean updateRemotePlanFile() {
+        File file = new File(getPlanFileName(Calendar.getInstance(), true));
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        PlanFile planFile = new PlanFile();
+        planFile.setFile(file);
+        planFile.setfName(file.getName());
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] bytes = new byte[65536];
+            fileInputStream.read(bytes, 0, (int) file.length());
+            planFile.setContent(bytes);
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            if (planFileDao.planFileExist(DbUtil.getConnection(), UserManage.getUser(), planFile)) {
+                planFileDao.updatePlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+            } else {
+                planFileDao.insertPlanFile(DbUtil.getConnection(), UserManage.getUser(), planFile);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        System.out.println("finish updateRemotePlanFile()");
+        return true;
     }
 }

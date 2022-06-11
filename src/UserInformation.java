@@ -1,5 +1,8 @@
 import javax.swing.*;
 
+/**
+ * 用于显示个人信息的封装类
+ */
 public class UserInformation {
     private Box userInformationBox;
     private JPanel userNamePanel;
@@ -18,6 +21,9 @@ public class UserInformation {
     private JTextArea dayPlanFinishNumJTA;
     private JTextArea dayPlanFinishBetterJTA;
 
+    /**
+     * 构造时初始化
+     */
     public UserInformation() {
         userInformationBox = Box.createVerticalBox();
 
@@ -91,10 +97,17 @@ public class UserInformation {
         userInformationBox.add(dayPlanFinishBetterPanel);
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getUserInformationBox() {
         return userInformationBox;
     }
 
+    /**
+     * 更新该组件
+     */
     public void updateUserInformation() {
 
         userNameJTA.setText(UserManage.getUserName());
@@ -108,7 +121,7 @@ public class UserInformation {
         if (UserManage.getUser() == null) {
             planFinishBetterJTA.setText("暂无数据");
         } else {
-            planFinishBetterJTA.setText(String.format("%.2f%%", 10.0));
+            planFinishBetterJTA.setText(String.format("%.2f%%", UserManage.planFinishBetterThan()));
         }
 
         if (UserManage.getUser() == null) {
@@ -120,7 +133,7 @@ public class UserInformation {
         if (UserManage.getUser() == null) {
             dayPlanFinishBetterJTA.setText("暂无数据");
         } else {
-            dayPlanFinishBetterJTA.setText(String.format("%.2f%%", 1.1));
+            dayPlanFinishBetterJTA.setText(String.format("%.2f%%", UserManage.dayPlanFinishBetterThan()));
         }
     }
 }

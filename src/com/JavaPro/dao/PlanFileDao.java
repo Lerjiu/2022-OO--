@@ -1,12 +1,9 @@
 package com.JavaPro.dao;
 
-import com.JavaPro.model.planFile;
-import com.JavaPro.model.user;
+import com.JavaPro.model.PlanFile;
+import com.JavaPro.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.MessageFormat;
 import java.io.*;
 import java.util.ArrayList;
@@ -15,7 +12,8 @@ import java.util.ArrayList;
  * @describe 计划文件Dao类,拥有文件插入和文件查询的功能
  * @author: 周文瑞 20373804
  */
-public class planFileDao {
+public class PlanFileDao {
+    private static UserDao userDao = new UserDao();
 
     /**
      *  读取登录用户存在数据库所有的文件planFile
@@ -24,14 +22,15 @@ public class planFileDao {
      * @throws Exception
      * @return 返回登录用户的所有文件列表,设置了文件名字和文件内容,(以byte[]存储,最大为65536)
      */
-    public ArrayList<planFile> getAllPlanFile(Connection con, user u)throws Exception{
-        ArrayList<planFile> fileList = new ArrayList<>();
-        String fileName = "file_" + Integer.toString(u.getUid());
+    public ArrayList<PlanFile> getAllPlanFile(Connection con, User u)throws Exception{
+        ArrayList<PlanFile> fileList = new ArrayList<>();
+        int uid = userDao.getUidByName(con, u.getUserName());
+        String fileName = "file_" + uid;
         String sql = "SELECT * FROM {0}";
         Statement statement = con.createStatement();
         ResultSet rs =  statement.executeQuery(MessageFormat.format(sql,fileName));
         while(rs.next()){
-            planFile newfile = new planFile();
+            PlanFile newfile = new PlanFile();
             byte[] newContent = new byte[65536];
             newfile.setfName(rs.getString("fName"));
             InputStream in = rs.getBinaryStream("content");
@@ -52,22 +51,26 @@ public class planFileDao {
      * @param f 文件实例,在本函数中需要初始化fName和file
      * @throws Exception
      */
-    public void insertPlanFile(Connection con, user u,planFile f)throws Exception{
-        String fileName = "file_" + Integer.toString(u.getUid());
+    public boolean insertPlanFile(Connection con, User u, PlanFile f)throws Exception{
+        int uid = userDao.getUidByName(con, u.getUserName());
+        String fileName = "file_" + uid;
         String sql = "INSERT INTO "+fileName+"(fName,content) VALUES(?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         pstmt.setString(1,f.getfName());
         InputStream in = new FileInputStream(f.getFile());
         pstmt.setBinaryStream(2,in,(int)f.getFile().length());
         int result = pstmt.executeUpdate();
+        in.close();
+        pstmt.close();
+
         if( result > 0 )
         {
             System.out.println("文件写入成功");
+            return true;
         }else{
             System.out.println("文件写入失败");
+            return false;
         }
-        in.close();
-        pstmt.close();
     }
 
     /**
@@ -77,8 +80,9 @@ public class planFileDao {
      * @param f 文件实例,在本函数中需要初始化fName和file
      * @throws Exception
      */
-    public void updatePlanFile(Connection con, user u,planFile f)throws Exception{
-        String fileName = "file_" + Integer.toString(u.getUid());
+    public void updatePlanFile(Connection con, User u, PlanFile f)throws Exception {
+        int uid = userDao.getUidByName(con, u.getUserName());
+        String fileName = "file_" + uid;
         String sql = "UPDATE "+fileName+" SET content = ? WHERE fName = ?";
         PreparedStatement pstmt = con.prepareStatement(sql);
         InputStream in = new FileInputStream(f.getFile());
@@ -93,5 +97,23 @@ public class planFileDao {
         }
         in.close();
         pstmt.close();
+    }
+
+    public boolean planFileExist(Connection con, User u, PlanFile f) throws Exception {
+        int uid = userDao.getUidByName(con, u.getUserName());
+        String fileName = "file_" + uid;
+        String sql = "SELECT * FROM "+fileName+" WHERE fName = ?";
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setString(1,f.getfName());
+        ResultSet rs = pstmt.executeQuery();
+        if( rs.next() )
+        {
+            rs.close();
+            pstmt.close();
+            return true;
+        }
+        rs.close();
+        pstmt.close();
+        return  false;
     }
 }

@@ -6,6 +6,9 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 用于显示计划详情、修改计划的封装类
+ */
 public class PlanDetailDialog {
     private JDialog planDetailDialog;
     private PlanTable planTable;
@@ -35,6 +38,11 @@ public class PlanDetailDialog {
     private JPanel endHourPanel;
     private JPanel endMinutePanel;
 
+    /**
+     * 构造时初始化
+     * @param jFrame 创建JDialog时，需提供父窗口
+     * @param planTable 通知planTable进行相应修改
+     */
     public PlanDetailDialog(JFrame jFrame, PlanTable planTable) {
         System.out.println("创建plan detail dialog");
         this.planTable = planTable;
@@ -164,14 +172,26 @@ public class PlanDetailDialog {
         planDetailDialog.setSize(box.getPreferredSize());
     }
 
+    /**
+     * 返回构造后的组件
+     * @return
+     */
     public JDialog getPlanDetailDialog() {
         return planDetailDialog;
     }
 
+    /**
+     * 设置JDialog显示
+     * @param visible
+     */
     public void setVisible(boolean visible) {
         planDetailDialog.setVisible(visible);
     }
 
+    /**
+     * 判断修改计划的时间是否合法，并做出相应提示
+     * @return 修改计划的时间是否合法
+     */
     private boolean legalSettingTime() {
         Calendar startCalendar = Calendar.getInstance();
         Calendar endCalendar = Calendar.getInstance();

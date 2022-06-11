@@ -6,6 +6,9 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 用于显示新建plan时的窗口的封装类
+ */
 public class CreateDialog {
     private PlanTable planTable;
     private JDialog createJDialog;
@@ -34,6 +37,11 @@ public class CreateDialog {
     private JPanel endHourPanel;
     private JPanel endMinutePanel;
 
+    /**
+     * 构造时初始化
+     * @param jFrame 创建JDialog需要参数父窗口
+     * @param planTable 新建plan后，通知planTable（用于显示今日plan的封装类）
+     */
     public CreateDialog(JFrame jFrame, PlanTable planTable) {
         this.planTable = planTable;
 
@@ -146,10 +154,18 @@ public class CreateDialog {
         createJDialog.setSize(box.getPreferredSize());
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public JDialog getCreateJDialog() {
         return createJDialog;
     }
 
+    /**
+     * 判断新建计划的时间是否合法，并做出相应提示
+     * @return 新建计划的时间是否合法
+     */
     private boolean legalSettingTime() {
         Calendar startCalendar = Calendar.getInstance();
         Calendar endCalendar = Calendar.getInstance();

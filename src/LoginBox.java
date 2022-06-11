@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
+/**
+ * 用于显示登录的封装类
+ */
 public class LoginBox {
     private Box loginBox;
     private JPanel namePanel;
@@ -24,6 +26,10 @@ public class LoginBox {
     private JPasswordField passwordField;
     private JFrame jFrame;
 
+    /**
+     * 构造时初始化
+     * @param jFrame 显示提示窗口等需要父窗口
+     */
     public LoginBox(JFrame jFrame) {
         this.jFrame = jFrame;
 
@@ -80,6 +86,10 @@ public class LoginBox {
         loginBox.add(loginButtonPanel);
     }
 
+    /**
+     * 为button添加监听事件
+     * @param p 点击button执行对应逻辑后，通知个人中心，即PersonalCenter进行更新
+     */
     public void addButtonListener(PersonalCenter p) {
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -90,9 +100,18 @@ public class LoginBox {
                     JOptionPane.showMessageDialog(jFrame, "请检查密码是否符合规则");
                 } else {
                     UserManage.setUser(nameField.getText(), String.valueOf(passwordField.getPassword()));
+//                    System.out.println("setuser" + UserManage.getUser().getUserName());
                     if (UserManage.login()) {
                         p.updatePersonalCenter();
                         JOptionPane.showMessageDialog(jFrame, "登陆成功");
+
+                        //手动登录后，询问本地文件是否属于该登录账号，进行清除或上传
+                        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(jFrame, "本地数据是否属于该账号？", "验证", JOptionPane.YES_NO_OPTION)) {
+                            PlanManage.uploadLocalPlanFile();
+                        } else {
+                            PlanManage.deleteLocalPlanFile();
+                        }
+                        PlanManage.getRemotePlanFile();
                     } else {
                         UserManage.resetUser();
                         JOptionPane.showMessageDialog(jFrame, "登陆失败，请检查用户名和密码是否正确");
@@ -102,11 +121,18 @@ public class LoginBox {
         });
     }
 
+    /**
+     * 更新本组件显示
+     */
     public void updateLoginBox() {
         nameField.setText("");
         passwordField.setText("");
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getLoginBox() {
         return loginBox;
     }

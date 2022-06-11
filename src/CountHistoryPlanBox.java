@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * 用于显示历史计划统计的封装类
+ */
 public class CountHistoryPlanBox {
     private Box countHistoryPlanBox;
     private Box leftCountHistoryPlanBox;
@@ -24,6 +27,9 @@ public class CountHistoryPlanBox {
     private JTextArea planFinishRateJTA;
     private JTextArea dayPlanFinishRateJTA;
 
+    /**
+     * 构造时初始化
+     */
     public CountHistoryPlanBox() {
         countHistoryPlanBox = Box.createHorizontalBox();
         leftCountHistoryPlanBox = Box.createVerticalBox();
@@ -122,6 +128,10 @@ public class CountHistoryPlanBox {
         countHistoryPlanBox.add(rightCountHistoryPlanBox);
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getCountHistoryPlanBox() {
         return countHistoryPlanBox;
     }

@@ -9,6 +9,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Calendar;
 
+/**
+ * 用于显示今日计划的封装类
+ */
 public class PlanTable implements PlanAddible {
     private static final Object[] columName = {"计划", "状态", "时间"};
     private boolean isModify;
@@ -20,6 +23,11 @@ public class PlanTable implements PlanAddible {
     private Box planTableBox;
     private JFrame jFrame;
 
+    /**
+     * 构造时初始化
+     * @param buttonBox 添加计划时，添加对应的button
+     * @param jFrame 点击计划，创建PlanDetailDialog时需要提供父窗口
+     */
     public PlanTable(ButtonBox buttonBox, JFrame jFrame) {
         isModify = false;
         self = this;
@@ -104,6 +112,11 @@ public class PlanTable implements PlanAddible {
         planTableBox.add(Box.createVerticalGlue());
     }
 
+    /**
+     * 添加计划
+     * @param plan
+     * @return 计划所在位置
+     */
     @Override
     public int addPlan(Plan plan) {
 //        System.out.println("plan num:" + model.getRowCount());
@@ -150,35 +163,67 @@ public class PlanTable implements PlanAddible {
         return model.getRowCount()-1;
     }
 
+    /**
+     * 移除选中的plan，修改后移除原本的plan，添加修改后的新plan
+     */
     public void removeSelectedPlan() {
         buttonBox.removeButton(planTable.getSelectedRow());
         model.removeRow(planTable.getSelectedRow());
     }
 
+    /**
+     *
+     * @return 返回已选中的plan
+     */
     public Plan getSelectedPlan() {
         return (Plan) model.getValueAt(planTable.getSelectedRow(), 0);
     }
 
+    /**
+     * 将pos位置的plan设为选中
+     * @param pos
+     */
     public void setSelectedPlan(int pos) {
         planTable.setRowSelectionInterval(pos,pos);
     }
 
+    /**
+     * 更新该组件
+     */
     public void updatePlanTable() {
         planTable.repaint();
     }
 
+    /**
+     * @deprecated 将对planTable的操作封装在此类中，此方法没有用到
+     * @return 返回核心组件planTable
+     */
     public JTable getPlanTable() {
         return planTable;
     }
 
+    /**
+     *
+     * @return 返回父窗口
+     */
     public JFrame getFrame() {
         return jFrame;
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getPlanTableBox() {
         return planTableBox;
     }
 
+    /**
+     * 判断plan时间是否重叠
+     * @param start
+     * @param end
+     * @return plan时间是否重叠
+     */
     public boolean overlapPlan(Calendar start, Calendar end) {
         for (int i = 0; i < model.getRowCount(); i++) {
             Plan plan = (Plan) model.getValueAt(i,0);
@@ -193,14 +238,28 @@ public class PlanTable implements PlanAddible {
         return false;
     }
 
+    /**
+     *
+     * @return 返回现在是否处于修改plan的状态
+     */
     public boolean getIsModify() {
         return isModify;
     }
 
+    /**
+     * 设置是否处于修改plan的状态
+     * @param modify
+     */
     public void setModify(boolean modify) {
         isModify = modify;
     }
 
+    /**
+     * 修改计划时，用来判断时间是否重叠（跳过被选中的计划）
+     * @param start
+     * @param end
+     * @return 修改计划时，时间是否重叠
+     */
     public boolean modifyOverlapPlan(Calendar start, Calendar end) {
         for (int i = 0; i < model.getRowCount(); i++) {
             if (i == planTable.getSelectedRow()) {
@@ -215,6 +274,10 @@ public class PlanTable implements PlanAddible {
         return false;
     }
 
+    /**
+     * 检查并更改plan的status
+     * @return 返回装填是否改变
+     */
     public boolean checkPlanStatus() {
         boolean changed = false;
         Calendar now = Calendar.getInstance();
@@ -241,6 +304,10 @@ public class PlanTable implements PlanAddible {
         return changed;
     }
 
+    /**
+     * 更新todayPlanList，因为用到的是planTable中的数据，所以选择放在该类中
+     * @param dayPlanList
+     */
     public void updatePlanToDayPlanList(DayPlanList dayPlanList) {
         for (int i = 0; i < model.getRowCount(); i++) {
             Plan plan = (Plan) model.getValueAt(i, 0);
@@ -248,6 +315,10 @@ public class PlanTable implements PlanAddible {
         }
     }
 
+    /**
+     *
+     * @return 返回正在进行的plan
+     */
     public Plan getRunningPlan() {
         for (int i = 0; i < model.getRowCount(); i++) {
             Plan plan = (Plan) model.getValueAt(i, 0);

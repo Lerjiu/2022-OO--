@@ -1,5 +1,8 @@
 import javax.swing.*;
 
+/**
+ * 用于整个应用进行分页显示地封装类
+ */
 public class PageTabbedPane {
     private JTabbedPane pageTabbedPane;
     private Box todayPlanBox;
@@ -8,6 +11,14 @@ public class PageTabbedPane {
     private JSplitPane runningPlanSplitPane;
     private JTabbedPane personalCenter;
 
+    /**
+     * 构造时初始化
+     * @param todayPlanBox 今日计划
+     * @param historyPlanJScrollPane 历史计划
+     * @param countPlanBox 计划统计
+     * @param runningPlanSplitPane 正在进行
+     * @param personalCenter 个人中心
+     */
     public PageTabbedPane(Box todayPlanBox, JScrollPane historyPlanJScrollPane, Box countPlanBox, JSplitPane runningPlanSplitPane, JTabbedPane personalCenter) {
         this.todayPlanBox = todayPlanBox;
         this.historyPlanJScrollPane = historyPlanJScrollPane;
@@ -23,6 +34,10 @@ public class PageTabbedPane {
         pageTabbedPane.add("个人中心", personalCenter);
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public JTabbedPane getPageTabbedPane() {
         return pageTabbedPane;
     }

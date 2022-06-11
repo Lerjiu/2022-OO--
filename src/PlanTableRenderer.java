@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
+/**
+ * JTable的渲染器
+ */
 public class PlanTableRenderer implements TableCellRenderer {
 
     @Override

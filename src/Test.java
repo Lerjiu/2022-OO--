@@ -64,20 +64,10 @@ public class Test {
 
         JFrame jFrame = new JFrame("Test");
 
-//        PlanList plans = new PlanList();
-//
-//        for (int i = 0; i < 10; i++) {
-//            plans.addPlan(new Plan("plan" + i,"plan" + i, "12","0","13","0"));
-//        }
         ButtonBox buttonBox = new ButtonBox();
 
         PlanTable plans = new PlanTable(buttonBox, jFrame);
 
-//        for (int i = 0; i < 10; i++) {
-//            Plan plan = new Plan(plans,"plan" + i,"plan" + i, "12","0","13","0");
-//            plans.addPlan(plan);
-//            buttonBox.addButton(plan.getFinishButton());
-//        }
         Box planBox = Box.createHorizontalBox();
 
         planBox.add(plans.getPlanTableBox());
@@ -163,7 +153,15 @@ public class Test {
 
         new Timer().schedule(checkPlanStatus, 0, 1000);
 
-        if (UserManage.loadUser()) UserManage.login();
-        personalCenter.updatePersonalCenter();
+        if (UserManage.loadUser()) {
+            if (UserManage.login()) {
+                personalCenter.updatePersonalCenter();
+            } else {
+                JOptionPane.showMessageDialog(jFrame, "登陆失败，请检查用户名和密码是否正确");
+            }
+        }
+
+
+//        PlanManage.deleteLocalPlanFile();
     }
 }

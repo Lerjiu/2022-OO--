@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * 用于显示退出登录的封装类
+ */
 public class LogoutBox {
     private Box logoutBox;
     private JPanel namePanel;
@@ -11,6 +14,10 @@ public class LogoutBox {
     private JButton logoutButton;
     private JFrame jFrame;
 
+    /**
+     * 构造时初始化
+     * @param jFrame 显示提示窗口等需要父窗口
+     */
     public LogoutBox(JFrame jFrame) {
         this.jFrame = jFrame;
 
@@ -34,6 +41,10 @@ public class LogoutBox {
         logoutBox.add(logoutButtonPanel);
     }
 
+    /**
+     * 为button添加监听事件
+     * @param p 点击button执行对应逻辑后，通知个人中心，即PersonalCenter进行更新
+     */
     public void addButtonListener(PersonalCenter p) {
         logoutButton.addActionListener(new ActionListener() {
             @Override
@@ -45,10 +56,17 @@ public class LogoutBox {
         });
     }
 
+    /**
+     * 更新该组件
+     */
     public void updateLogoutBox() {
         nameField.setText(UserManage.getUserName());
     }
 
+    /**
+     *
+     * @return 返回构造后的组件
+     */
     public Box getLogoutBox() {
         return logoutBox;
     }

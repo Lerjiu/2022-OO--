@@ -6,7 +6,7 @@ import java.io.File;
  * 文件实体类
  * @author 周文瑞 20373804
  */
-public class planFile {
+public class PlanFile {
     private String fName;
     private File file;
     private byte[] content;

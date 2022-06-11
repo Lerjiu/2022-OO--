@@ -3,7 +3,14 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.time.LocalTime;
 
+/**
+ * 用于显示时钟效果的组件
+ */
 public class ImitateClock extends JComponent {
+    /**
+     * 重写paint方法
+     * @param g
+     */
     public void paint(Graphics g){
         Color darkBlue = new Color(0x00, 0x31, 0x5e);
         Color lightBlue = new Color(0xa1,0xc4,0xfd);

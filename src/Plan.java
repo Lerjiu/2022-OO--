@@ -4,6 +4,9 @@ import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.util.Calendar;
 
+/**
+ * 计划的实体类，实现序列化，用于存储与传输
+ */
 public class Plan implements Serializable {
     /**
      * {@value serialVersionUID}
