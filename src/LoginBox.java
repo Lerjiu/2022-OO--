@@ -112,6 +112,10 @@ public class LoginBox {
                             PlanManage.deleteLocalPlanFile();
                         }
                         PlanManage.getRemotePlanFile();
+
+                        //重新加载页面
+                        PlanManage.getTodayPlan();
+                        PlanManage.getHistoryPlan();
                     } else {
                         UserManage.resetUser();
                         JOptionPane.showMessageDialog(jFrame, "登陆失败，请检查用户名和密码是否正确");

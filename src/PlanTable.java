@@ -162,6 +162,12 @@ public class PlanTable implements PlanAddible {
         buttonBox.addButton(plan.getFinishButton());
         return model.getRowCount()-1;
     }
+    
+    public void removeAllPlan() {
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.removeRow(i);
+        }
+    }
 
     /**
      * 移除选中的plan，修改后移除原本的plan，添加修改后的新plan

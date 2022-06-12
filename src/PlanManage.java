@@ -18,6 +18,7 @@ public class PlanManage {
     //命名：xxxx-xx-xx-plan.plan
     private static PlanFileDao planFileDao = new PlanFileDao();
     private static PlanTable todayPlanTable;
+    private static JTabbedPane historyPlans;
     private static DayPlanList todayPlanList = new DayPlanList();
     private static File todayPlanFile;
     private static int historyDayPlanNum = 0;
@@ -117,6 +118,11 @@ public class PlanManage {
         }
     }
 
+    public static void getTodayPlan() {
+        todayPlanTable.removeAllPlan();
+        getTodayPlan(todayPlanTable);
+    }
+
     /**
      * 用户更改今日计划后，更新对应文件
      */
@@ -145,6 +151,8 @@ public class PlanManage {
      * @param jTabbedPane 按天显示历史计划的组件
      */
     public static void getHistoryPlan(JTabbedPane jTabbedPane) {
+        historyPlans = jTabbedPane;
+
         File directory = new File("");
         directory = new File(directory.getAbsolutePath());
 
@@ -194,6 +202,13 @@ public class PlanManage {
 //            System.out.println("add");
         }
 
+    }
+
+    public static void getHistoryPlan() {
+        for (int i = 0; i < historyPlans.getTabCount(); i++) {
+            historyPlans.remove(i);
+        }
+        getHistoryPlan(historyPlans);
     }
 
     /**

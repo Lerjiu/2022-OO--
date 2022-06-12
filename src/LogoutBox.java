@@ -51,6 +51,7 @@ public class LogoutBox {
             public void actionPerformed(ActionEvent e) {
                 UserManage.logout();
                 p.updatePersonalCenter();
+                System.out.println("");
                 JOptionPane.showMessageDialog(jFrame, "成功退出登录");
             }
         });
