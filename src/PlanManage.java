@@ -118,6 +118,9 @@ public class PlanManage {
         }
     }
 
+    /**
+     * 登录后，执行此方法更新页面显示地数据
+     */
     public static void getTodayPlan() {
         todayPlanTable.removeAllPlan();
         getTodayPlan(todayPlanTable);
@@ -204,6 +207,9 @@ public class PlanManage {
 
     }
 
+    /**
+     * 登录后，执行此方法更新页面显示地数据
+     */
     public static void getHistoryPlan() {
         for (int i = 0; i < historyPlans.getTabCount(); i++) {
             historyPlans.remove(i);
